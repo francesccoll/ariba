@@ -1,11 +1,14 @@
 import os
 import sys
 import pysam
+import pysam.bcftools
 import pyfastaq
 import vcfcall_ariba
 
 class Error (Exception): pass
 
+# FC note: script edited as indicated here: https://github.com/sanger-pathogens/ariba/issues/327
+# to avoid ARIBA error: mpileup: invalid option -- 't'
 
 class SamtoolsVariants:
     def __init__(self,
@@ -36,13 +39,14 @@ class SamtoolsVariants:
 
         tmp_vcf = self.vcf_file + '.tmp'
         with open(tmp_vcf, 'w') as f:
-            print(pysam.mpileup(
+#           print(pysam.mpileup(
+            print(pysam.bcftools.mpileup(
                 '-t', 'INFO/AD,INFO/ADF,INFO/ADR',
                 '-L', '99999999',
                 '-A',
                 '-f', self.ref_fa,
-                '-u',
-                '-v',
+#                '-u',
+#                '-v',
                 self.bam,
             ), end='', file=f)
 
